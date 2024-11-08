@@ -1,0 +1,11 @@
+spring:
+  elasticsearch:
+    rest:
+      uris: http://313.co.kr:9292
+      username: test
+      password: test
+logging:
+  level:
+    org.springframework.data.elasticsearch:
+      core: TRACE
+      client: TRACE
