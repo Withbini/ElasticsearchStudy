@@ -29,17 +29,21 @@ public class BoardService {
     public GetMultipleBoardResponseDto searchByTitleAndContents(String author, String title, String contents, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         if (!author.isEmpty()) {
-            var li = boardRepository.findByAuthorOrderByGeneratedAtDesc(author, pageable);
+            var li = boardRepository.findByAuthorContainingOrderByGeneratedAtDesc(author, pageable);
             return GetMultipleBoardResponseDto.fromEntity(li);
         } else if (title.isEmpty() && !contents.isEmpty()) {
             var li = boardRepository.findByContentsContainingOrderByGeneratedAtDesc(contents, pageable);
             return GetMultipleBoardResponseDto.fromEntity(li);
         } else if (!contents.isEmpty()) {
-            var li = boardRepository.findByTitleContainingOrContentsContainingOrderByGeneratedAtDesc(title, contents, pageable);
+            var li = boardRepository.findByTitleOrContentsOrderByGeneratedAtDesc(title, contents, pageable);
             return GetMultipleBoardResponseDto.fromEntity(li);
-        } else {
+        } else if (!title.isEmpty()) {
             var li = boardRepository.findByTitleContainingOrderByGeneratedAtDesc(title, pageable);
             return GetMultipleBoardResponseDto.fromEntity(li);
+        } else {
+            var li = boardRepository.findAll(pageable);
+            return GetMultipleBoardResponseDto.fromEntity(li);
+
         }
     }
 

@@ -11,10 +11,11 @@ public interface BoardRepository extends CrudRepository<Board, String> {
     //조회
     //조회수 up
     //thumb up
-    Page<Board> findByAuthorOrderByGeneratedAtDesc(String author, Pageable pageable);
-    Page<Board> findByTitleContainingOrContentsContainingOrderByGeneratedAtDesc(String title, String contents, Pageable pageable);
+    Page<Board> findByAuthorContainingOrderByGeneratedAtDesc(String author, Pageable pageable);
+    Page<Board> findByTitleOrContentsOrderByGeneratedAtDesc(String title, String contents, Pageable pageable);
     Page<Board> findByTitleContainingOrderByGeneratedAtDesc(String title, Pageable pageable);
     Page<Board> findByContentsContainingOrderByGeneratedAtDesc(String contents, Pageable pageable);
 
+    Page<Board> findAll(Pageable pageable);
     void deleteById(String id);
 }
