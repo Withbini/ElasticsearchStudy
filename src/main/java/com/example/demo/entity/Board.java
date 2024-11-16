@@ -3,7 +3,6 @@ package com.example.demo.entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -12,7 +11,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Getter
 @AllArgsConstructor
 @Builder
-@Document(indexName = "jaebin", createIndex=false)
+@Document(indexName = "jaebin", createIndex = false)
 public class Board {
     @Id
     private String id;

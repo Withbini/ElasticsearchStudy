@@ -41,7 +41,7 @@ public class BoardService {
             var li = boardRepository.findByTitleContainingOrderByGeneratedAtDesc(title, pageable);
             return GetMultipleBoardResponseDto.fromEntity(li);
         } else {
-            var li = boardRepository.findAll(pageable);
+            var li = boardRepository.findAllByOrderByGeneratedAtDesc(pageable);
             return GetMultipleBoardResponseDto.fromEntity(li);
 
         }

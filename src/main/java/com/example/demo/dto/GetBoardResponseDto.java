@@ -24,7 +24,7 @@ public class GetBoardResponseDto {
                 .title(board.getTitle())
                 .author(board.getAuthor())
                 .contents(board.getContents())
-                .generatedAt(board.getGeneratedAt())
+                .generatedAt(board.getGeneratedAt().toString())
                 .lastModified(board.getLastModified())
                 .views(board.getViews())
                 .thumbsUp(board.getThumbsUp())

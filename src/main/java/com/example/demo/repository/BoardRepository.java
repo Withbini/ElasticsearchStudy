@@ -16,6 +16,6 @@ public interface BoardRepository extends CrudRepository<Board, String> {
     Page<Board> findByTitleContainingOrderByGeneratedAtDesc(String title, Pageable pageable);
     Page<Board> findByContentsContainingOrderByGeneratedAtDesc(String contents, Pageable pageable);
 
-    Page<Board> findAll(Pageable pageable);
+    Page<Board> findAllByOrderByGeneratedAtDesc(Pageable pageable);
     void deleteById(String id);
 }

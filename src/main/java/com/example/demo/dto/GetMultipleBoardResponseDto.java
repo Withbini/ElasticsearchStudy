@@ -47,7 +47,7 @@ public class GetMultipleBoardResponseDto {
                     .id(board.getId())
                     .title(board.getTitle())
                     .author(board.getAuthor())
-                    .generatedAt(board.getGeneratedAt())
+                    .generatedAt(board.getGeneratedAt().toString())
                     .lastModified(board.getLastModified())
                     .views(board.getViews())
                     .thumbsUp(board.getThumbsUp())
