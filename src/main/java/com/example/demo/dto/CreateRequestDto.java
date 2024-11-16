@@ -7,9 +7,9 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class CreateRequestDto {
     @NotEmpty
-    private final String title;
+    private String title;
     @NotEmpty
-    private final String author;
+    private String author;
     @NotEmpty
-    private final String contents;
+    private String contents;
 }

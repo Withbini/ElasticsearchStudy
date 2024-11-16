@@ -9,3 +9,5 @@ logging:
     org.springframework.data.elasticsearch:
       core: TRACE
       client: TRACE
+    org.apache.http: TRACE
+    org.apache.http.wire: TRACE
