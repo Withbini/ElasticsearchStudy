@@ -31,4 +31,20 @@ public class Board {
     private Integer views;
     @Field(type = FieldType.Integer)
     private Integer thumbsUp;
+
+    void increaseViews() {
+        views++;
+    }
+
+    void decreaseViews() {
+        views--;
+    }
+
+    void increaseThumbsUp() {
+        thumbsUp++;
+    }
+
+    void decreaseThumbsUp() {
+        thumbsUp--;
+    }
 }

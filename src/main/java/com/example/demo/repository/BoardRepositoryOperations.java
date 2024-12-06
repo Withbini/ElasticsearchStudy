@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -13,7 +14,6 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import static org.elasticsearch.search.sort.SortBuilders.fieldSort;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class BoardRepositoryOperations {
 
         Query query = new NativeSearchQueryBuilder()
                 .withQuery(getSearchQuery(keyword, searchType))
-                .withSort(fieldSort(fieldToSort)
+                .withSort(SortBuilders.fieldSort(fieldToSort)
                         .order("asc".equalsIgnoreCase(orderToSort) ? SortOrder.ASC : SortOrder.DESC))
                 .withPageable(pageable)
                 .build();

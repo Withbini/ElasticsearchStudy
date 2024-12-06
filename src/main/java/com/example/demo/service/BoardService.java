@@ -1,20 +1,22 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.*;
+import com.example.demo.entity.ActionType;
 import com.example.demo.entity.Board;
 import com.example.demo.entity.SearchType;
 import com.example.demo.repository.BoardRepository;
-
 import com.example.demo.repository.BoardRepositoryOperations;
 import com.example.demo.util.SearchResultMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 import org.springframework.stereotype.Service;
-import org.springframework.data.elasticsearch.core.document.Document;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -122,5 +124,85 @@ public class BoardService {
             }
         }
         return "";
+    }
+
+    public BoardDataDto updateData(BoardUpdateDataRequestDto requestDto) {
+        final String id = requestDto.getId();
+        ActionType actionType = requestDto.getAction();
+        String target = requestDto.getTarget();
+        String value = requestDto.getValue();
+
+        var board = boardRepository.findById(id);
+        if (board.isEmpty()) {
+            return BoardDataDto.empty();
+        }
+
+        Map<String, Object> updateMap = new HashMap<>();
+        if (actionType == ActionType.INCREASE) {
+            increase(board.get(), target, updateMap);
+        } else if (actionType == ActionType.DECREASE) {
+            decrease(board.get(), target, updateMap);
+        } else if (actionType == ActionType.SET) {
+            changeValue(board.get(), target, value, updateMap);
+        }
+
+        if (!updateMap.isEmpty()) {
+            updateQuery(id, updateMap);
+            return BoardDataDto.fromEntity(board.get());
+        }
+        return BoardDataDto.empty();
+    }
+
+    private void changeValue(Board board, String target, String value, Map<String, Object> updateMap) {
+        Field field = null;
+        try {
+            field = board.getClass().getDeclaredField(target);
+            field.setAccessible(true); // private 필드 접근 허용
+            Class<?> fieldType = field.getType();
+            if (fieldType == String.class) {
+                addNeedUpdate(target, value, updateMap);
+            } else {
+                throw new RuntimeException("integer 타입이 아닙니다");
+            }
+
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void increase(Board board, String target, Map<String, Object> updateMap) {
+        Field field = null;
+        try {
+            field = board.getClass().getDeclaredField(target);
+            field.setAccessible(true); // private 필드 접근 허용
+            Class<?> fieldType = field.getType();
+            if (fieldType == Integer.class) {
+                Integer object = (Integer) field.get(board); // 객체의 필드 값 가져오기
+                addNeedUpdate(target, object + 1, updateMap);
+            } else {
+                throw new RuntimeException("integer 타입이 아닙니다");
+            }
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void decrease(Board board, String target, Map<String, Object> updateMap) {
+        Field field = null;
+        try {
+            field = board.getClass().getDeclaredField(target);
+            field.setAccessible(true); // private 필드 접근 허용
+            Class<?> fieldType = field.getType();
+            if (fieldType == Integer.class) {
+                Integer object = (Integer) field.get(board); // 객체의 필드 값 가져오기
+                addNeedUpdate(target, object - 1, updateMap);
+            } else {
+                throw new RuntimeException("integer 타입이 아닙니다");
+            }
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

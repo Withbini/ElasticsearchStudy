@@ -21,6 +21,7 @@ public class SearchResult<T> {
     public static class Meta {
         private final int page;
         private final int total;
+        private final int size;
         private final boolean isLast;
     }
 }
