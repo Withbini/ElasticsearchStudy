@@ -1,12 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.CreateRequestDto;
-import com.example.demo.dto.GetBoardResponseDto;
-import com.example.demo.dto.GetMultipleBoardResponseDto;
-import com.example.demo.dto.BoardUpdateRequestDto;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Board;
+import com.example.demo.entity.SearchType;
 import com.example.demo.repository.BoardRepository;
 
+import com.example.demo.repository.BoardRepositoryOperations;
+import com.example.demo.util.SearchResultMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -25,6 +25,7 @@ import java.util.UUID;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final ElasticsearchOperations operations;
+    private final BoardRepositoryOperations boardRepositoryOperations;
 
     public GetMultipleBoardResponseDto searchByTitleAndContents(String author, String title, String contents, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -43,8 +44,20 @@ public class BoardService {
         } else {
             var li = boardRepository.findAllByOrderByGeneratedAtDesc(pageable);
             return GetMultipleBoardResponseDto.fromEntity(li);
-
         }
+    }
+
+    public SearchResult<BoardDataDto> search(String keyword, SearchType searchType, String sortField, String sortOrder, Pageable pageable) {
+        var result = boardRepositoryOperations.search(keyword, searchType, sortField, sortOrder, pageable);
+        return SearchResultMapper.mapToSearchResult(result, pageable,
+                entity -> new BoardDataDto(
+                        entity.getId(),
+                        entity.getTitle(),
+                        entity.getAuthor(),
+                        entity.getGeneratedAt(),
+                        entity.getLastModified(),
+                        entity.getViews(),
+                        entity.getThumbsUp()));
     }
 
     public GetBoardResponseDto searchById(String id) {
