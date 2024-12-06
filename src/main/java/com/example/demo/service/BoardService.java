@@ -8,6 +8,8 @@ import com.example.demo.repository.BoardRepository;
 import com.example.demo.repository.BoardRepositoryOperations;
 import com.example.demo.util.SearchResultMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.search.aggregations.metrics.Sum;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -24,6 +26,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BoardService {
     private final BoardRepository boardRepository;
     private final ElasticsearchOperations operations;
@@ -152,6 +155,26 @@ public class BoardService {
         }
         return BoardDataDto.empty();
     }
+
+
+    public Long getTotalSummary(String target) {
+        if (target.equals("views"))
+            return getTotalViews();
+        else if (target.equals("thumbsUp"))
+            return getTotalThumbsUp();
+        else return 0L;
+    }
+
+    private Long getTotalViews() {
+        Sum sum = boardRepositoryOperations.getTotalData("views").getAggregations().get("total_views");
+        return Math.round(sum.value());
+    }
+
+    private Long getTotalThumbsUp() {
+        Sum sum = boardRepositoryOperations.getTotalData("thumbsUp").getAggregations().get("total_thumbsUp");
+        return Math.round(sum.value());
+    }
+
 
     private void changeValue(Board board, String target, String value, Map<String, Object> updateMap) {
         Field field = null;

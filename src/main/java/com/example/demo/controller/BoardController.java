@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.*;
-import com.example.demo.entity.Board;
 import com.example.demo.entity.SearchType;
 import com.example.demo.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -65,8 +64,13 @@ public class BoardController {
 
     @PutMapping("/data")
     public BoardDataDto updateData(@Validated @RequestBody BoardUpdateDataRequestDto requestDto, BindingResult result) {
-        var data= service.updateData(requestDto);
-        log.info("JBJB data :{}",data);
+        var data = service.updateData(requestDto);
+        log.info("JBJB data :{}", data);
         return data;
+    }
+
+    @GetMapping("/aggregate")
+    public Long getSummary(@RequestParam String param) {
+        return service.getTotalSummary(param);
     }
 }
